@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123b6d">
+<title>AGENTE-PRO</title>
+<style>
+:root{--navy:#123b6d;--blue:#1f65ad;--bg:#f3f6fa;--ink:#172334;--muted:#66758a;--line:#dbe3ed;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,#123b6d,#1f65ad);color:#fff;padding:22px 18px 18px}
+.top{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:24px;font-weight:800;letter-spacing:.5px}.tag{font-size:12px;opacity:.85;margin-top:4px}
+main{max-width:1000px;margin:20px auto;padding:0 14px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+nav button{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;padding:11px 14px;font-weight:700}
+nav button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #1d355710}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}.sub{color:var(--muted);margin:0 0 18px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+input,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:12px;font:inherit;background:#fff;color:var(--ink)}
+.search{flex:1;min-width:180px}button{cursor:pointer;font:inherit}
+.btn{border:0;border-radius:10px;padding:12px 15px;font-weight:700;background:var(--blue);color:#fff}
+.btn.secondary{background:#e9f0f8;color:var(--navy);border:1px solid #d5e1ef}
+.btn.danger{background:#fff0ef;color:var(--red);border:1px solid #f4c7c3}
+form .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-size:13px;font-weight:700;color:#42516a;margin-bottom:6px}
+.field{min-width:0}.field.full{grid-column:1/-1}
+textarea{min-height:88px;resize:vertical}
+.list{display:grid;gap:10px}
+.customer{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.customer strong{display:block;font-size:16px}.customer small{display:block;color:var(--muted);margin-top:5px;line-height:1.45}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{padding:8px 10px;font-size:13px}
+.empty{text-align:center;padding:28px 10px;color:var(--muted)}
+.stat{font-size:34px;font-weight:800;color:var(--navy)}
+.note{font-size:13px;color:var(--muted);line-height:1.5}.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:10px 16px 28px}
+@media(max-width:600px){form .grid{grid-template-columns:1fr}.field.full{grid-column:auto}.customer{flex-direction:column}.actions{width:100%}.actions button{flex:1}}
+</style>
+</head>
+<body>
+<header><div class="top"><div><div class="brand">AGENTE-PRO</div><div class="tag">Il tuo assistente commerciale</div></div><div aria-hidden="true" style="font-size:30px">📊</div></div></header>
+<main>
+<nav aria-label="Menu principale">
+<button class="active" data-view="home">Panoramica</button>
+<button data-view="clients">Clienti</button>
+<button data-view="mandanti">Mandanti</button>
+<button data-view="agenda">Agenda</button>
+</nav>
+<section id="home" class="view">
+<div class="panel"><h1>Benvenuto in AGENTE-PRO</h1><p class="sub">Organizza il tuo lavoro commerciale in un unico posto.</p>
+<div class="stat" id="totalClients">0</div><div>Clienti registrati</div>
+<div style="margin-top:18px"><button class="btn" id="goClients">Gestisci clienti</button></div></div>
+<div class="panel"><h2>In questa versione</h2><p class="note">Rubrica clienti e anagrafica mandanti funzionanti. Agenda in arrivo. I dati restano salvati nel browser di questo dispositivo.</p></div>
+</section>
+<section id="clients" class="view hidden">
+<div class="panel"><h1>Clienti</h1><p class="sub">Crea e gestisci la tua rubrica commerciale.</p>
+<div class="toolbar"><input class="search" id="search" placeholder="Cerca per nome, azienda o telefono" aria-label="Cerca clienti"><button class="btn" id="newClient">+ Nuovo cliente</button></div>
+<div id="clientList" class="list"></div></div>
+<div class="panel hidden" id="formPanel"><h2 id="formTitle">Nuovo cliente</h2>
+<form id="clientForm"><input type="hidden" id="clientId"><div class="grid">
+<div class="field"><label for="name">Nome e cognome *</label><input id="name" required autocomplete="name"></div>
+<div class="field"><label for="company">Azienda</label><input id="company" autocomplete="organization"></div>
+<div class="field"><label for="phone">Telefono</label><input id="phone" type="tel" autocomplete="tel"></div>
+<div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"></div>
+<div class="field full"><label for="address">Indirizzo</label><input id="address" autocomplete="street-address"></div>
+<div class="field full"><label for="notes">Note</label><textarea id="notes" placeholder="Preferenze, prodotti, informazioni utili…"></textarea></div>
+</div><div class="toolbar" style="margin-top:14px;margin-bottom:0"><button class="btn" type="submit">Salva cliente</button><button class="btn secondary" type="button" id="cancelForm">Annulla</button></div>
+</form></div>
+</section>
+<section id="mandanti" class="view hidden">
+<div class="panel"><h1>Mandanti</h1><p class="sub">Registra le aziende che rappresenti e i loro riferimenti.</p>
+<div class="toolbar"><input class="search" id="searchMandanti" placeholder="Cerca mandante per azienda o contatto" aria-label="Cerca mandanti"><button class="btn" id="newMandante">+ Nuovo mandante</button></div>
+<div id="mandanteList" class="list"></div></div>
+<div class="panel hidden" id="mandanteFormPanel"><h2 id="mandanteFormTitle">Nuovo mandante</h2>
+<form id="mandanteForm"><input type="hidden" id="mandanteId"><div class="grid">
+<div class="field full"><label for="mandanteName">Ragione sociale *</label><input id="mandanteName" required autocomplete="organization"></div>
+<div class="field"><label for="mandanteContact">Referente</label><input id="mandanteContact" autocomplete="name"></div>
+<div class="field"><label for="mandantePhone">Telefono</label><input id="mandantePhone" type="tel" autocomplete="tel"></div>
+<div class="field"><label for="mandanteEmail">Email</label><input id="mandanteEmail" type="email" autocomplete="email"></div>
+<div class="field"><label for="mandanteWebsite">Sito web</label><input id="mandanteWebsite" type="url" placeholder="https://"></div>
+<div class="field full"><label for="mandanteNotes">Note</label><textarea id="mandanteNotes" placeholder="Zona, prodotti, accordi o altre informazioni…"></textarea></div>
+</div><div class="toolbar" style="margin-top:14px;margin-bottom:0"><button class="btn" type="submit">Salva mandante</button><button class="btn secondary" type="button" id="cancelMandanteForm">Annulla</button></div>
+</form></div>
+</section>
+<section id="agenda" class="view hidden"><div class="panel"><h1>Agenda e visite</h1><p class="sub">Qui aggiungeremo appuntamenti, visite ai clienti e promemoria.</p><div class="empty">Funzione in arrivo.</div></div></section>
+</main>
+<footer>AGENTE-PRO · Dati salvati in questo browser</footer>
+<script>
+const CLIENTS_KEY="agente-pro-clienti-v1", MANDANTI_KEY="agente-pro-mandanti-v1";
+const $=id=>document.getElementById(id);
+function load(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
+let clients=load(CLIENTS_KEY), mandanti=load(MANDANTI_KEY);
+const newId=()=>((crypto.randomUUID&&crypto.randomUUID())||String(Date.now())+Math.random().toString(16).slice(2));
+function showView(view){document.querySelectorAll(".view").forEach(el=>el.classList.toggle("hidden",el.id!==view));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));if(view==="clients")renderClients();if(view==="mandanti")renderMandanti();}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+$("goClients").addEventListener("click",()=>showView("clients"));
+function saveClients(){localStorage.setItem(CLIENTS_KEY,JSON.stringify(clients));renderClients();}
+function renderClients(){
+$("totalClients").textContent=clients.length;const q=$("search").value.trim().toLowerCase(),list=$("clientList");list.innerHTML="";
+const matches=clients.filter(c=>[c.name,c.company,c.phone,c.email,c.address].join(" ").toLowerCase().includes(q));
+if(!matches.length){list.innerHTML='<div class="empty">'+(q?"Nessun cliente trovato.":"Non hai ancora clienti. Premi “Nuovo cliente” per iniziare.")+'</div>';return;}
+matches.sort((a,b)=>(a.name||"").localeCompare(b.name||"","it")).forEach(c=>{
+const item=document.createElement("div");item.className="customer";const info=document.createElement("div"),strong=document.createElement("strong");strong.textContent=c.name;info.appendChild(strong);
+const small=document.createElement("small");small.textContent=[c.company,c.phone,c.email,c.address].filter(Boolean).join(" · ")||"Nessun dettaglio aggiunto";info.appendChild(small);
+const actions=document.createElement("div");actions.className="actions";const edit=document.createElement("button");edit.className="btn secondary";edit.textContent="Modifica";edit.onclick=()=>openClientForm(c);
+const del=document.createElement("button");del.className="btn danger";del.textContent="Elimina";del.onclick=()=>{if(confirm("Eliminare il cliente "+c.name+"?")){clients=clients.filter(x=>x.id!==c.id);saveClients();}};
+actions.append(edit,del);item.append(info,actions);list.appendChild(item);});
+}
+function openClientForm(c=null){$("formPanel").classList.remove("hidden");$("formTitle").textContent=c?"Modifica cliente":"Nuovo cliente";$("clientId").value=c?c.id:"";["name","company","phone","email","address","notes"].forEach(k=>$(k).value=c?(c[k]||""):"");$("name").focus();$("formPanel").scrollIntoView({behavior:"smooth",block:"start"});}
+$("newClient").addEventListener("click",()=>openClientForm());$("cancelForm").addEventListener("click",()=>$("formPanel").classList.add("hidden"));$("search").addEventListener("input",renderClients);
+$("clientForm").addEventListener("submit",e=>{e.preventDefault();const id=$("clientId").value,data={id:id||newId(),name:$("name").value.trim(),company:$("company").value.trim(),phone:$("phone").value.trim(),email:$("email").value.trim(),address:$("address").value.trim(),notes:$("notes").value.trim()};if(!data.name)return;if(id){const i=clients.findIndex(c=>c.id===id);if(i>=0)clients[i]=data;}else clients.push(data);saveClients();$("formPanel").classList.add("hidden");$("clientForm").reset();$("clientId").value="";});
+function saveMandanti(){localStorage.setItem(MANDANTI_KEY,JSON.stringify(mandanti));renderMandanti();}
+function renderMandanti(){
+const q=$("searchMandanti").value.trim().toLowerCase(),list=$("mandanteList");list.innerHTML="";
+const matches=mandanti.filter(m=>[m.name,m.contact,m.phone,m.email,m.website,m.notes].join(" ").toLowerCase().includes(q));
+if(!matches.length){list.innerHTML='<div class="empty">'+(q?"Nessun mandante trovato.":"Non hai ancora mandanti. Premi “Nuovo mandante” per iniziare.")+'</div>';return;}
+matches.sort((a,b)=>(a.name||"").localeCompare(b.name||"","it")).forEach(m=>{
+const item=document.createElement("div");item.className="customer";const info=document.createElement("div"),strong=document.createElement("strong");strong.textContent=m.name;info.appendChild(strong);
+const small=document.createElement("small");small.textContent=[m.contact,m.phone,m.email,m.website].filter(Boolean).join(" · ")||"Nessun dettaglio aggiunto";info.appendChild(small);
+if(m.notes){const note=document.createElement("small");note.textContent="Note: "+m.notes;info.appendChild(note);}
+const actions=document.createElement("div");actions.className="actions";const edit=document.createElement("button");edit.className="btn secondary";edit.textContent="Modifica";edit.onclick=()=>openMandanteForm(m);
+const del=document.createElement("button");del.className="btn danger";del.textContent="Elimina";del.onclick=()=>{if(confirm("Eliminare il mandante "+m.name+"?")){mandanti=mandanti.filter(x=>x.id!==m.id);saveMandanti();}};
+actions.append(edit,del);item.append(info,actions);list.appendChild(item);});
+}
+function openMandanteForm(m=null){$("mandanteFormPanel").classList.remove("hidden");$("mandanteFormTitle").textContent=m?"Modifica mandante":"Nuovo mandante";$("mandanteId").value=m?m.id:"";const fields={mandanteName:"name",mandanteContact:"contact",mandantePhone:"phone",mandanteEmail:"email",mandanteWebsite:"website",mandanteNotes:"notes"};Object.entries(fields).forEach(([id,key])=>$(id).value=m?(m[key]||""):"");$("mandanteName").focus();$("mandanteFormPanel").scrollIntoView({behavior:"smooth",block:"start"});}
+$("newMandante").addEventListener("click",()=>openMandanteForm());$("cancelMandanteForm").addEventListener("click",()=>$("mandanteFormPanel").classList.add("hidden"));$("searchMandanti").addEventListener("input",renderMandanti);
+$("mandanteForm").addEventListener("submit",e=>{e.preventDefault();const id=$("mandanteId").value,data={id:id||newId(),name:$("mandanteName").value.trim(),contact:$("mandanteContact").value.trim(),phone:$("mandantePhone").value.trim(),email:$("mandanteEmail").value.trim(),website:$("mandanteWebsite").value.trim(),notes:$("mandanteNotes").value.trim()};if(!data.name)return;if(id){const i=mandanti.findIndex(m=>m.id===id);if(i>=0)mandanti[i]=data;}else mandanti.push(data);saveMandanti();$("mandanteFormPanel").classList.add("hidden");$("mandanteForm").reset();$("mandanteId").value="";});
+renderClients();
+</script>
+</body>
+</html>
